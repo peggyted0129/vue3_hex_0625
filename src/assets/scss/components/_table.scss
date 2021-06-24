@@ -1,0 +1,15 @@
+@media (min-width: 1400px){
+  .container, .container-sm, .container-md, .container-lg, .container-xl, .container-xxl {
+    max-width: 1140px;
+  }
+}
+
+/* Cart.vue | BackShopping.vue */
+.cart-table {
+  & thead {
+    border-bottom: 3px solid rgba(154, 149, 149, 0.5)
+  }
+  & tfoot {
+    border-top: 3px solid rgba(154, 149, 149, 0.5)
+  }
+}

@@ -1,0 +1,99 @@
+.page-link, .page-link:hover {
+	color: $theme;
+}
+.page-link.active {
+	z-index: 1;
+	color: $theme;
+}
+.page-link {
+  height: 42px;
+  width: 42px;
+  text-align: center;
+  color: $theme;
+  border: 1px solid $theme;
+  & .material-icons {
+    color:$theme;
+  }
+  &:hover {
+    background-color: $theme;
+    color:  $white;
+    transition: .7s;
+  }
+  &:hover .material-icons { 
+    color:$white;
+  }
+  &:focus {
+    z-index: 3;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem #dad7d6;
+  }
+}
+.page-item:first-child .page-link {
+  border-top-left-radius: 0rem;
+  border-bottom-left-radius: 0rem;
+}
+.page-item:last-child .page-link {
+  border-top-right-radius: 0rem;
+  border-bottom-right-radius: 0rem;
+}
+.page-item.active .page-link {
+  z-index: 1;
+  color: #fff;
+  background-color: $theme;
+  border-color:$theme;
+}
+ /* 前台 - 客製化 */
+ .products-pagination {
+  list-style: none;
+  display: inline-block;
+  padding: 0;
+  margin-top: 10px;
+  & li {
+    display: inline;
+    text-align: center;
+  }
+  & li a {
+    float: left;
+    display: block;
+    font-size: 14px;
+    text-decoration: none;
+    padding: 5px 12px;
+    color:#fff;
+    margin-left: -1px;
+    border:1px solid transparent;
+    line-height: 1.5;
+    &.active{ cursor: default;}
+    &:active{ outline: none;}
+  }
+}
+.modal-page {
+  & li a {
+    margin:0 5px;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    @include border-radius(100%);
+    background-color: $theme;
+    &.prev{
+      @include border-radius(50px 0 0 50px);
+      width:50px;
+    }
+    &.next{
+      @include border-radius(0 50px 50px 0);
+      width:50px;
+    }
+    &:hover{
+      background-color:$sgreen;
+      color: $white;
+     }
+    &.active, &:active{
+      background-color:$sgreen;
+    }
+  }
+}
+@media(min-width: 414px) {
+  .modal-page li a.prev, .modal-page li a.next {
+    width: 100px;
+  }
+}
