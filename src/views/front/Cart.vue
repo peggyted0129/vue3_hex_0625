@@ -74,11 +74,11 @@
       </div>
     </div>
     <!-- 購物車 footer -->
-    <div v-if="carData.length > 0" class="d-flex justify-content-between mt-8">
+    <div class="d-flex justify-content-between mt-8">
       <router-link to="/products" class="cart-footer-btn btn btn-theme text-white hvr-float">
         <i class="fa fa-undo me-3"></i>繼續購物
       </router-link>
-      <button type="button" @click="postCarts" class="cart-footer-btn btn btn-sgreen text-white hvr-float">
+      <button type="button" v-if="carData.length > 0" @click="postCarts" class="cart-footer-btn btn btn-sgreen text-white hvr-float">
         前往結帳<i class="fas fa-angle-double-right ms-3"></i>
       </button>
     </div>
@@ -94,59 +94,12 @@ export default {
   mixins: [MixUser],
   data () {
     return {
-      cart: {
-        carts: []
-      }
-      // cartLength: 0
     }
   },
   computed: {
     ...mapGetters(['isLoading'])
   },
   methods: {
-    getCarts () {
-      const vm = this
-      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
-      vm.$store.dispatch('updateLoading', true)
-      vm.$http.get(api).then((res) => {
-        vm.cart = res.data.data
-        // vm.cartLength = vm.cart.carts.length
-        console.log('購物車資訊', vm.cart)
-        vm.$store.dispatch('updateLoading', false)
-      })
-    },
-    postCarts () {
-      const vm = this
-      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
-      const cacheID = []
-      vm.$store.dispatch('updateLoading', true)
-      vm.$http.get(api).then((res) => {
-        const cacheData = res.data.data.carts
-        cacheData.forEach((item) => {
-          cacheID.push(item.product_id)
-        })
-        console.log(cacheID)
-      }).then(() => {
-        cacheID.forEach((item) => {
-          vm.$http.delete(`${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${item}`)
-        })
-      }).then(() => {
-        vm.carData.forEach((item) => {
-          const cache = {
-            product_id: item.id,
-            qty: item.qty
-          }
-          vm.$http.post(api, { data: cache }).then(() => {
-            vm.carData = []
-            sessionStorage.removeItem('carData')
-            vm.$store.dispatch('updateLoading', false)
-          }).then(() => {
-            vm.$router.push('/checkout/order_create').catch((err) => { return err })
-            vm.getCarts()
-          })
-        })
-      })
-    }
   },
   created () {
     this.getCarts()

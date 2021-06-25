@@ -47,19 +47,18 @@
     <div class="d-flex my-5 justify-content-center">
       <Pagination :pages="pagination" @get-product="getProducts"></Pagination>
     </div>
-
     <!-- 購物車列表 -->
     <div class="container my-15">
+      <!-- 購物車列表 - session 內容 -->
       <div class="d-flex align-items-center justify-content-between mb-4">
-        <h3 class="text-theme fw-bolder">購買清單</h3>
-        <button @click="delAllLocalCarts" class="btn btn-outline-danger" type="button" v-if="carData.length > 0">清空購物車</button>
+        <h3 class="text-theme fw-bolder">購物車清單</h3>
+        <button @click="delAllLocalCarts" class="btn btn-outline-danger" type="button" v-if="carData.length > 0">清空 session 購物車</button>
       </div>
       <div class="row">
         <div class="col-12">
           <div v-if="carData.length == 0" class="empty fw-bolder d-flex align-items-center justify-content-center">
             <div>
               <p>您的購物車現在沒有商品喔，快去購物吧!!</p>
-              <router-link to="/products" class="btn btn-theme btn-lg text-white mt-9 fw-bolder hvr-bounce-to-right">逛逛商店</router-link>
             </div>
           </div>
           <ul v-if="carData.length > 0" class="order py-4 px-0 p-sm-4">
@@ -113,6 +112,68 @@
               </div>
             </li>
           </ul>
+          <div class="w-100 text-end">
+            <button type="button" v-if="carData.length > 0" @click="postCarts" class="cart-footer-btn btn btn-sgreen text-white hvr-float mt-7">
+              前往結帳<i class="fas fa-angle-double-right ms-3"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- 購物車列表 - 加入 API 後的內容 -->
+      <div class="d-flex align-items-center justify-content-between mt-10 mb-4">
+        <h3 class="text-theme fw-bolder">加入購物車，結帳去!!</h3>
+        <button @click="deleteAllCarts" class="btn btn-outline-danger" type="button" v-if="cartLength > 0">清空購物車</button>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div v-if="cartLength == 0" class="empty fw-bolder d-flex align-items-center justify-content-center">
+            <div>
+              <p>還沒有商品要結帳喔，快把我買下吧!!</p>
+            </div>
+          </div>
+          <ul v-if="cartLength > 0" class="order py-4 px-0 p-sm-4">
+            <li class="orderList" v-for="item in cart.carts" :key="item.product_id">
+              <div class="row flex-wrap">
+                <div class="col-3 col-md-2 px-0 px-md-0">
+                  <img :src="item.product.imageUrl" alt="cart-item">
+                </div>
+                <div class="col-8 col-md-9 px-0">
+                  <div class="row mx-3 w-100">
+                    <div class="col-12 col-md-3 pb-3 px-0">
+                      <div class="orderTitle fw-bolder pt-md-9">{{ item.title }}</div>
+                    </div>
+                    <div class="col-md-2 pb-3 px-0">
+                      <div class="pt-md-9 ms-md-3">NT$ {{ item.product.price }}</div>
+                    </div>
+                    <div class="col-12 col-md-4 pb-3 px-0 pt-md-9">
+                      <div>{{ item.qty }}{{ item.product.unit }}</div>
+                    </div>
+                    <div class="col-12 col-md-3 pt-md-9 text-end">
+                      <div class="orderTotal">小計 ${{ item.final_total }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-1 orderDel px-0 pt-md-9 text-center text-sm-end">
+                  <div class="pe-2" @click="removeCartItem(item.id)">
+                    <i class="far fa-trash-alt"></i>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="orderList border-0 mb-0">
+              <div class="row">
+                <div class="col-4 col-sm-6 text-end"> 共 {{ cartLength }} 項</div>
+                <div class="col-3 col-sm-3 text-end fw-bolder text-sgreen">總計</div>
+                <div class="col-4 col-sm-2 text-end fw-bolder text-sgreen p-0">NT$ {{ cart.final_total }}</div>
+                <div class="col-1 p-0"></div>
+              </div>
+            </li>
+          </ul>
+          <!-- <div class="w-100 text-end">
+            <button type="button" v-if="cartLength > 0" @click="postCarts" class="cart-footer-btn btn btn-sgreen text-white hvr-float mt-7">
+              前往結帳<i class="fas fa-angle-double-right ms-3"></i>
+            </button>
+          </div> -->
         </div>
       </div>
     </div>
@@ -166,7 +227,6 @@ export default {
   },
   data () {
     return {
-      // isLoading: false,
       pagination: {},
       products: [], // 產品列表
       product: {}, // props 傳遞到內層的暫存資料
@@ -178,14 +238,14 @@ export default {
           address: ''
         },
         message: ''
-      },
-      cart: {} // 購物車列表
+      }
     }
   },
   computed: {
     ...mapGetters(['isLoading'])
   },
   methods: {
+    // 因為要 addlocalCarts 後關閉 modal，所以要另外寫
     addlocalCarts (product, num = 1) {
       const vm = this
       vm.$refs.userProductModal.hideModal()
@@ -229,6 +289,38 @@ export default {
         sessionStorage.setItem('carData', JSON.stringify(vm.carData))
       }
     },
+    // 不想跳去 /checkout/order_create 頁，所以單獨寫
+    postCarts () { // POST | 購物車列表
+      const vm = this
+      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
+      const cacheID = [] // 得到購物車內每個產品 ID
+      vm.$store.dispatch('updateLoading', true)
+      vm.$http.get(api).then((res) => { // 先取得購物車列表
+        const cacheData = res.data.data.carts // 取得購物車列表陣列內容
+        cacheData.forEach((item) => {
+          cacheID.push(item.product_id)
+        })
+        console.log('1. 得到每個產品 id')
+      }).then(() => { // 先清空購物車之前的內容
+        vm.$http.delete(`${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/carts`)
+        console.log('2. 清空 database 購物車全部品項')
+      }).then(() => {
+        vm.carData.forEach((item) => { // 取出購物車列表重組資料
+          const cache = {
+            product_id: item.product_id,
+            qty: item.qty
+          }
+          console.log('3. 重組購物車、準備 post 入 database')
+          vm.$http.post(api, { data: cache }).then(() => {
+            vm.carData = [] // 清空初始化購物車 session 內容
+            sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
+            console.log('4. 清空 session 購物車全部內容')
+            vm.$store.dispatch('updateLoading', false)
+          })
+        })
+        vm.getCarts()
+      })
+    },
     getProducts (page = 1) {
       const vm = this
       vm.$store.dispatch('updateLoading', true)
@@ -244,14 +336,6 @@ export default {
         }
       })
     },
-    getCart () {
-      const vm = this
-      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
-      vm.$http.get(api).then((res) => {
-        console.log('Cart 列表', res.data)
-        vm.cart = res.data.data
-      })
-    },
     updateCart (id, qty) {
       const vm = this
       const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${id}`
@@ -264,52 +348,12 @@ export default {
         if (res.data.success) {
           vm.toastTopEnd(res.data.message, 'success')
           vm.$store.dispatch('updateLoading', false)
-          vm.getCart()
+          vm.getCarts()
         } else {
           vm.toastTopEnd(res.data.message, 'error')
           vm.$store.dispatch('updateLoading', false)
         }
       })
-    },
-    removeCartItem (id) {
-      const vm = this
-      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${id}`
-      vm.$store.dispatch('updateLoading', true)
-      vm.axios.delete(api)
-        .then((res) => {
-          if (res.data.success) {
-            vm.toastTopEnd(res.data.message, 'success')
-            vm.$store.dispatch('updateLoading', false)
-            vm.getCart()
-          } else {
-            vm.toastTopEnd(res.data.message, 'error')
-            vm.$store.dispatch('updateLoading', false)
-          }
-        })
-        .catch((err) => {
-          vm.$swal({ title: err.data.message, icon: 'error' })
-          vm.$store.dispatch('updateLoading', false)
-        })
-    },
-    deleteAllCarts () {
-      const vm = this
-      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/carts`
-      vm.$store.dispatch('updateLoading', true)
-      vm.$http.delete(api)
-        .then((res) => {
-          console.log('刪除全部商品', res.data)
-          if (res.data.success) {
-            vm.toastTopEnd('購物車商品已全部刪除', 'success')
-            vm.getCart()
-          } else {
-            vm.toastTopEnd(res.data.message, 'error')
-          }
-          vm.$store.dispatch('updateLoading', false)
-        })
-        .catch((err) => {
-          vm.$swal({ title: err.data.message, icon: 'error' })
-          vm.$store.dispatch('updateLoading', false)
-        })
     },
     openModal (item) {
       const vm = this
@@ -337,7 +381,7 @@ export default {
               vm.$store.dispatch('updateLoading', false)
               console.log(res.data)
               vm.toastTopEnd(res.data.message, 'success')
-              vm.getCart()
+              vm.getCarts()
               vm.$refs.form.resetForm() // 清空欄位
               vm.form.message = ''
             } else {
@@ -368,7 +412,7 @@ export default {
   },
   created () {
     this.getProducts()
-    this.getCart()
+    this.getCarts()
   }
 }
 </script>
