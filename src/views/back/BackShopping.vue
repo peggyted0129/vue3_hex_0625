@@ -135,18 +135,18 @@
             <li class="orderList" v-for="item in cart.carts" :key="item.product_id">
               <div class="row flex-wrap">
                 <div class="col-3 col-md-2 px-0 px-md-0">
-                  <img :src="item.product.imageUrl" alt="cart-item">
+                  <img :src="item.product.imageUrl" alt="cart-item" style="width:90px; height:90px">
                 </div>
                 <div class="col-8 col-md-9 px-0">
                   <div class="row mx-3 w-100">
                     <div class="col-12 col-md-3 pb-3 px-0">
-                      <div class="orderTitle fw-bolder pt-md-9">{{ item.title }}</div>
+                      <div class="orderTitle fw-bolder pt-md-9">{{ item.product.title }}</div>
                     </div>
                     <div class="col-md-2 pb-3 px-0">
                       <div class="pt-md-9 ms-md-3">NT$ {{ item.product.price }}</div>
                     </div>
                     <div class="col-12 col-md-4 pb-3 px-0 pt-md-9">
-                      <div>{{ item.qty }}{{ item.product.unit }}</div>
+                      <div>{{ item.qty }} {{ item.product.unit }}</div>
                     </div>
                     <div class="col-12 col-md-3 pt-md-9 text-end">
                       <div class="orderTotal">小計 ${{ item.final_total }}</div>
@@ -290,6 +290,56 @@ export default {
       }
     },
     // 不想跳去 /checkout/order_create 頁，所以單獨寫
+    getCartId () { // 第1步驟: 得到購物車內每個產品 ID、push 進 cacheID 陣列裡
+      const vm = this
+      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
+      const cacheID = [] // 得到購物車內每個產品 ID
+      vm.$http.get(api).then((res) => { // 先取得購物車列表
+        const cacheData = res.data.data.carts // 取得購物車列表陣列內容
+        cacheData.forEach((item) => {
+          cacheID.push(item.product_id)
+        })
+        console.log('1. 得到每個產品 id')
+      })
+        .then(() => { // 先清空購物車之前的內容
+          cacheID.forEach((item) => {
+            vm.$http.delete(`${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${item}`)
+          })
+          console.log('2. 清空 database 購物車全部品項')
+          return vm.postCartId()
+        })
+    },
+    postCartId () { // 第2步驟: 重組carData資料，post 進 api 購物車
+      const vm = this
+      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
+      vm.carData.forEach((item, index) => { // 取出購物車列表重組資料
+        const cache = {
+          product_id: item.product_id,
+          qty: item.qty
+        }
+        console.log('3. 重組購物車、得到 cache', cache)
+        vm.$http.post(api, { data: cache }).then(() => {
+          console.log('4. post 入購物車成功')
+          vm.$store.dispatch('updateLoading', false)
+          vm.getCarts()
+          if (index === item.length - 1) {
+            console.log('5. 最後一個 index', index, '準備清空 session 購物車')
+            return vm.delSessionCart()
+          }
+        })
+      })
+    },
+    delSessionCart () { // 第3步驟: 清空 seesion 購物車資料
+      this.carData = [] // 清空初始化購物車 session 內容
+      sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
+      console.log('5. 清空 session 購物車全部內容')
+    },
+    postCarts () { // POST | 購物車列表
+      const vm = this
+      vm.$store.dispatch('updateLoading', true)
+      vm.getCartId()
+    },
+    /*  原本的
     postCarts () { // POST | 購物車列表
       const vm = this
       const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
@@ -302,7 +352,10 @@ export default {
         })
         console.log('1. 得到每個產品 id')
       }).then(() => { // 先清空購物車之前的內容
-        vm.$http.delete(`${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/carts`)
+        cacheID.forEach((item) => {
+          vm.$http.delete(`${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${item}`)
+        })
+        // vm.$http.delete(`${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/carts`)
         console.log('2. 清空 database 購物車全部品項')
       }).then(() => {
         vm.carData.forEach((item) => { // 取出購物車列表重組資料
@@ -311,16 +364,28 @@ export default {
             qty: item.qty
           }
           console.log('3. 重組購物車、準備 post 入 database')
+          console.log('cache', cache)
           vm.$http.post(api, { data: cache }).then(() => {
-            vm.carData = [] // 清空初始化購物車 session 內容
-            sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
-            console.log('4. 清空 session 購物車全部內容')
+            // vm.carData = [] // 清空初始化購物車 session 內容
+            // sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
+            console.log('4. post 入購物車')
             vm.$store.dispatch('updateLoading', false)
           })
+          // .then(() => {
+          //   vm.carData = [] // 清空初始化購物車 session 內容
+          //   sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
+          //   console.log('5. 清空 session 購物車全部內容')
+          //   vm.getCarts()
+          // })
         })
+      }).then(() => {
+        vm.carData = [] // 清空初始化購物車 session 內容
+        sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
+        console.log('5. 清空 session 購物車全部內容')
         vm.getCarts()
       })
     },
+    */
     getProducts (page = 1) {
       const vm = this
       vm.$store.dispatch('updateLoading', true)
@@ -398,16 +463,6 @@ export default {
     isPhone (value) {
       const phoneNumber = /^(09)[0-9]{8}$/
       return phoneNumber.test(value) ? true : '需要正確的電話號碼'
-    },
-    toastTopEnd (msg, icon) {
-      this.$swal({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        icon: icon,
-        title: msg
-      })
     }
   },
   created () {
