@@ -62,6 +62,12 @@ const routes = [
         name: 'BackProducts',
         component: () => import('@/views/back/BackProducts'),
         meta: { requiresAuth: true }
+      },
+      {
+        path: 'coupon',
+        name: 'BackCoupon',
+        component: () => import('@/views/back/BackCoupon'),
+        meta: { requiresAuth: true }
       }
     ]
   },

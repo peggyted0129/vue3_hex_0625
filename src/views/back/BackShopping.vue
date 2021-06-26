@@ -51,7 +51,8 @@
     <div class="container my-15">
       <!-- 購物車列表 - session 內容 -->
       <div class="d-flex align-items-center justify-content-between mb-4">
-        <h3 class="text-theme fw-bolder">購物車清單</h3>
+        <h3 class="text-theme fw-bolder">購物車清單
+        </h3>
         <button @click="delAllLocalCarts" class="btn btn-outline-danger" type="button" v-if="carData.length > 0">清空 session 購物車</button>
       </div>
       <div class="row">
@@ -112,16 +113,17 @@
               </div>
             </li>
           </ul>
-          <div class="w-100 text-end">
-            <button type="button" v-if="carData.length > 0" @click="postCarts" class="cart-footer-btn btn btn-sgreen text-white hvr-float mt-7">
-              前往結帳<i class="fas fa-angle-double-right ms-3"></i>
+          <div v-if="carData.length > 0" class="d-flex justify-content-end align-items-center w-100 text-end mt-7">
+            <p>( 按下 "前往結帳" 後，<span class="text-sgreen fw-bolder">購物車清單</span>內容會清空 | <span class="text-sgreen fw-bolder">未結帳的購物車內容</span>也會清空 )</p>
+            <button type="button" @click="postCarts" class="cart-footer-btn btn btn-sgreen text-white hvr-float ms-5" style="width:250px">
+              加入購物車，結帳去!<i class="fas fa-angle-double-right ms-3"></i>
             </button>
           </div>
         </div>
       </div>
       <!-- 購物車列表 - 加入 API 後的內容 -->
       <div class="d-flex align-items-center justify-content-between mt-10 mb-4">
-        <h3 class="text-theme fw-bolder">加入購物車，結帳去!!</h3>
+        <h3 class="text-theme fw-bolder">購物車確定，準備結帳!! <span class="h6 text-sgreen ms-5 fw-bolder">( 優惠券 8 折碼 : HappyCoupon )</span><span class="h6 text-sgreen ms-5 fw-bolder">( 優惠券 7 折碼 : CoolCoupon )</span></h3>
         <button @click="deleteAllCarts" class="btn btn-outline-danger" type="button" v-if="cartLength > 0">清空購物車</button>
       </div>
       <div class="row">
@@ -145,11 +147,19 @@
                     <div class="col-md-2 pb-3 px-0">
                       <div class="pt-md-9 ms-md-3">NT$ {{ item.product.price }}</div>
                     </div>
-                    <div class="col-12 col-md-4 pb-3 px-0 pt-md-9">
+                    <div class="col-12 col-md-1 pb-3 px-0 pt-md-9">
                       <div>{{ item.qty }} {{ item.product.unit }}</div>
                     </div>
-                    <div class="col-12 col-md-3 pt-md-9 text-end">
-                      <div class="orderTotal">小計 ${{ item.final_total }}</div>
+                    <div class="col-12 col-md-2 pt-md-9 text-end">
+                      <div class="orderTotal">總原價 ${{ item.total }}</div>
+                    </div>
+                    <!-- 沒有套用優惠券 -->
+                    <div v-if="item.total === item.final_total" class="col-12 col-md-4 pt-md-9 text-end">
+                      <div class="orderTotal text-danger fw-bolder">尚未套用優惠券</div>
+                    </div>
+                    <!-- 有套用優惠券 -->
+                    <div v-if="item.total !== item.final_total" class="col-12 col-md-4 pt-md-9 text-end">
+                      <div class="orderTotal fw-bolder">套用優惠券小計 ${{ getDiscount(item.final_total) }}</div>
                     </div>
                   </div>
                 </div>
@@ -161,19 +171,27 @@
               </div>
             </li>
             <li class="orderList border-0 mb-0">
-              <div class="row">
-                <div class="col-4 col-sm-6 text-end"> 共 {{ cartLength }} 項</div>
-                <div class="col-3 col-sm-3 text-end fw-bolder text-sgreen">總計</div>
-                <div class="col-4 col-sm-2 text-end fw-bolder text-sgreen p-0">NT$ {{ cart.final_total }}</div>
+              <div class="row align-items-center">
+                <!-- 套用優惠碼 -->
+                <div class="col-4 col-sm-4">
+                  <div class="input-group mb-3">
+                    <input type="text" v-model.trim="coupon_code" class="form-control" placeholder="請輸入優惠碼" aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <button @click="addCouponCode" class="btn btn-theme hvr-bounce-to-right" type="button">套用優惠碼</button>
+                  </div>
+                </div>
+                <div class="col-2 col-sm-2 text-end"> 共 {{ cartLength }} 項</div>
+                <div class="col-1 col-sm-2 text-end">總計 NT$ {{ cart.total }}</div>
+                <div v-if="cart.total === cart.final_total" class="col-4 col-sm-3 text-end fw-bolder text-danger p-0">尚未套用優惠券</div>
+                <div v-if="cart.total !== cart.final_total" class="col-4 col-sm-3 text-end fw-bolder text-sgreen p-0">套用優惠券總計 NT$ {{ getDiscount(cart.final_total) }}</div>
                 <div class="col-1 p-0"></div>
               </div>
             </li>
           </ul>
-          <!-- <div class="w-100 text-end">
-            <button type="button" v-if="cartLength > 0" @click="postCarts" class="cart-footer-btn btn btn-sgreen text-white hvr-float mt-7">
-              前往結帳<i class="fas fa-angle-double-right ms-3"></i>
+          <div class="w-100 text-end">
+            <button type="button" v-if="cartLength > 0" class="cart-footer-btn btn btn-sgreen text-white hvr-float mt-7">
+              這按鈕無效果<i class="fas fa-angle-double-right ms-3"></i>
             </button>
-          </div> -->
+          </div>
         </div>
       </div>
     </div>
@@ -230,6 +248,7 @@ export default {
       pagination: {},
       products: [], // 產品列表
       product: {}, // props 傳遞到內層的暫存資料
+      coupon_code: '',
       form: { // 表單結構
         user: {
           name: '',
@@ -245,6 +264,10 @@ export default {
     ...mapGetters(['isLoading'])
   },
   methods: {
+    getDiscount (totalPrice) {
+      const discount = Math.round(totalPrice)
+      return discount
+    },
     // 因為要 addlocalCarts 後關閉 modal，所以要另外寫
     addlocalCarts (product, num = 1) {
       const vm = this
@@ -289,103 +312,13 @@ export default {
         sessionStorage.setItem('carData', JSON.stringify(vm.carData))
       }
     },
-    // 不想跳去 /checkout/order_create 頁，所以單獨寫
-    getCartId () { // 第1步驟: 得到購物車內每個產品 ID、push 進 cacheID 陣列裡
-      const vm = this
-      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
-      const cacheID = [] // 得到購物車內每個產品 ID
-      vm.$http.get(api).then((res) => { // 先取得購物車列表
-        const cacheData = res.data.data.carts // 取得購物車列表陣列內容
-        cacheData.forEach((item) => {
-          cacheID.push(item.product_id)
-        })
-        console.log('1. 得到每個產品 id')
-      })
-        .then(() => { // 先清空購物車之前的內容
-          cacheID.forEach((item) => {
-            vm.$http.delete(`${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${item}`)
-          })
-          console.log('2. 清空 database 購物車全部品項')
-          return vm.postCartId()
-        })
-    },
-    postCartId () { // 第2步驟: 重組carData資料，post 進 api 購物車
-      const vm = this
-      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
-      vm.carData.forEach((item, index) => { // 取出購物車列表重組資料
-        const cache = {
-          product_id: item.product_id,
-          qty: item.qty
-        }
-        console.log('3. 重組購物車、得到 cache', cache)
-        vm.$http.post(api, { data: cache }).then(() => {
-          console.log('4. post 入購物車成功')
-          vm.$store.dispatch('updateLoading', false)
-          vm.getCarts()
-          if (index === item.length - 1) {
-            console.log('5. 最後一個 index', index, '準備清空 session 購物車')
-            return vm.delSessionCart()
-          }
-        })
-      })
-    },
-    delSessionCart () { // 第3步驟: 清空 seesion 購物車資料
+    // 延續 MixUser.vue 的 postCarts(): 在此頁並未轉址，所以方法獨立
+    delSessionCart () {
       this.carData = [] // 清空初始化購物車 session 內容
       sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
-      console.log('5. 清空 session 購物車全部內容')
+      console.log('4. 清空 session 購物車全部內容')
+      this.getCarts()
     },
-    postCarts () { // POST | 購物車列表
-      const vm = this
-      vm.$store.dispatch('updateLoading', true)
-      vm.getCartId()
-    },
-    /*  原本的
-    postCarts () { // POST | 購物車列表
-      const vm = this
-      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
-      const cacheID = [] // 得到購物車內每個產品 ID
-      vm.$store.dispatch('updateLoading', true)
-      vm.$http.get(api).then((res) => { // 先取得購物車列表
-        const cacheData = res.data.data.carts // 取得購物車列表陣列內容
-        cacheData.forEach((item) => {
-          cacheID.push(item.product_id)
-        })
-        console.log('1. 得到每個產品 id')
-      }).then(() => { // 先清空購物車之前的內容
-        cacheID.forEach((item) => {
-          vm.$http.delete(`${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${item}`)
-        })
-        // vm.$http.delete(`${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/carts`)
-        console.log('2. 清空 database 購物車全部品項')
-      }).then(() => {
-        vm.carData.forEach((item) => { // 取出購物車列表重組資料
-          const cache = {
-            product_id: item.product_id,
-            qty: item.qty
-          }
-          console.log('3. 重組購物車、準備 post 入 database')
-          console.log('cache', cache)
-          vm.$http.post(api, { data: cache }).then(() => {
-            // vm.carData = [] // 清空初始化購物車 session 內容
-            // sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
-            console.log('4. post 入購物車')
-            vm.$store.dispatch('updateLoading', false)
-          })
-          // .then(() => {
-          //   vm.carData = [] // 清空初始化購物車 session 內容
-          //   sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
-          //   console.log('5. 清空 session 購物車全部內容')
-          //   vm.getCarts()
-          // })
-        })
-      }).then(() => {
-        vm.carData = [] // 清空初始化購物車 session 內容
-        sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
-        console.log('5. 清空 session 購物車全部內容')
-        vm.getCarts()
-      })
-    },
-    */
     getProducts (page = 1) {
       const vm = this
       vm.$store.dispatch('updateLoading', true)
@@ -429,6 +362,19 @@ export default {
         vm.$store.dispatch('updateLoading', false)
         vm.product = res.data.product
         vm.$refs.userProductModal.openModal()
+      })
+    },
+    addCouponCode () {
+      const vm = this
+      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/coupon`
+      const coupon = {
+        code: vm.coupon_code
+      }
+      vm.$store.dispatch('updateLoading', true)
+      vm.$http.post(api, { data: coupon }).then((response) => {
+        vm.toastTopEnd(response.data.message, 'success')
+        vm.$store.dispatch('updateLoading', false)
+        vm.getCarts()
       })
     },
     createOrder () {

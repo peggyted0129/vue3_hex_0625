@@ -94,35 +94,36 @@ export default {
       sessionStorage.removeItem('carData')
       this.carData = JSON.parse(sessionStorage.getItem('carData')) || []
     },
-    postCarts () { // POST | 購物車列表
-      const vm = this
-      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
-      const cacheID = [] // 得到購物車內每個產品 ID
-      vm.$store.dispatch('updateLoading', true)
-      vm.$http.get(api).then((res) => { // 先取得購物車列表
-        const cacheData = res.data.data.carts // 取得購物車列表陣列內容
-        cacheData.forEach((item) => {
-          cacheID.push(item.product_id)
-        })
-        console.log('1. 得到每個產品 id')
-      }).then(() => { // 先清空購物車之前的內容
-        vm.$http.delete(`${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/carts`)
-        console.log('2. 清空 database 購物車全部品項')
-      }).then(() => {
-        vm.carData.forEach((item) => { // 取出購物車列表重組資料
+    // 加入 API 購物車
+    delSessionCart () {
+      this.carData = [] // 清空初始化購物車 session 內容
+      sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
+      console.log('4. 清空 session 購物車全部內容')
+      this.getCarts()
+      this.$router.push('/checkout/order_create')
+    },
+    postCarts () {
+      this.coupon_code = ''
+      this.$store.dispatch('updateLoading', true)
+      const delApi = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/carts`
+      const postapi = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`
+      this.$http.delete(delApi).then(() => { // 1. delete | 購物車列表
+        console.log('1. 清空 API 購物車全部品項')
+        this.carData.forEach((item, index) => { // 2. 取出購物車列表重組資料
           const cache = {
             product_id: item.product_id,
             qty: item.qty
           }
-          console.log('3. 重組購物車、準備 post 入 database')
-          vm.$http.post(api, { data: cache }).then(() => {
-            vm.carData = [] // 清空初始化購物車 session 內容
-            sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
-            console.log('4. 清空 session 購物車全部內容')
-            vm.$store.dispatch('updateLoading', false)
-          }).then(() => {
-            vm.$router.push('/checkout/order_create').catch((err) => { return err })
-            vm.getCarts()
+          console.log('2. 重組購物車、得到 cache', cache)
+          return this.$http.post(postapi, { data: cache }).then(() => { // 3. POST | 購物車
+            console.log('產品索引', index, 'POST 購物車成功')
+            setTimeout(() => {
+              if ((this.carData.length - 1) === index) { // 4. 清空 session 購物車
+                console.log('3. 跑到最後一個 index', index, '準備倒數5秒清空 session 購物車')
+                this.delSessionCart()
+                this.$store.dispatch('updateLoading', false)
+              }
+            }, 5000)
           })
         })
       })

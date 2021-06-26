@@ -74,11 +74,11 @@
       </div>
     </div>
     <!-- 購物車 footer -->
-    <div class="d-flex justify-content-between mt-8">
+    <div v-if="carData.length > 0" class="d-flex justify-content-between mt-8">
       <router-link to="/products" class="cart-footer-btn btn btn-theme text-white hvr-float">
         <i class="fa fa-undo me-3"></i>繼續購物
       </router-link>
-      <button type="button" v-if="carData.length > 0" @click="postCarts" class="cart-footer-btn btn btn-sgreen text-white hvr-float">
+      <button type="button" @click="postCarts" class="cart-footer-btn btn btn-sgreen text-white hvr-float">
         前往結帳<i class="fas fa-angle-double-right ms-3"></i>
       </button>
     </div>
