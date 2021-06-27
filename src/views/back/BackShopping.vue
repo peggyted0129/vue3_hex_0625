@@ -248,7 +248,6 @@ export default {
       pagination: {},
       products: [], // 產品列表
       product: {}, // props 傳遞到內層的暫存資料
-      coupon_code: '',
       form: { // 表單結構
         user: {
           name: '',
@@ -264,10 +263,6 @@ export default {
     ...mapGetters(['isLoading'])
   },
   methods: {
-    getDiscount (totalPrice) {
-      const discount = Math.round(totalPrice)
-      return discount
-    },
     // 因為要 addlocalCarts 後關閉 modal，所以要另外寫
     addlocalCarts (product, num = 1) {
       const vm = this
@@ -312,13 +307,6 @@ export default {
         sessionStorage.setItem('carData', JSON.stringify(vm.carData))
       }
     },
-    // 延續 MixUser.vue 的 postCarts(): 在此頁並未轉址，所以方法獨立
-    delSessionCart () {
-      this.carData = [] // 清空初始化購物車 session 內容
-      sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
-      console.log('4. 清空 session 購物車全部內容')
-      this.getCarts()
-    },
     getProducts (page = 1) {
       const vm = this
       vm.$store.dispatch('updateLoading', true)
@@ -362,19 +350,6 @@ export default {
         vm.$store.dispatch('updateLoading', false)
         vm.product = res.data.product
         vm.$refs.userProductModal.openModal()
-      })
-    },
-    addCouponCode () {
-      const vm = this
-      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/coupon`
-      const coupon = {
-        code: vm.coupon_code
-      }
-      vm.$store.dispatch('updateLoading', true)
-      vm.$http.post(api, { data: coupon }).then((response) => {
-        vm.toastTopEnd(response.data.message, 'success')
-        vm.$store.dispatch('updateLoading', false)
-        vm.getCarts()
       })
     },
     createOrder () {

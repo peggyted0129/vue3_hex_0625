@@ -69,6 +69,16 @@
     height: 90px;
   }
 }
+@include pad {
+  .order .orderImg {
+    width: 70px;
+  }
+}
+@include desktop {
+  .order .orderImg {
+    width: 90px;
+  }
+}
 /* Cart.vue - empty */
 .empty {
   padding: 80px 0 80px;
@@ -93,7 +103,7 @@
 .cart-footer-btn {
   border-radius: 60px;
   font-size: 15px;
-  padding: 0 30px;
+  padding: 0 15px;
   letter-spacing: 2px;
   width: 180px;
   height: 54px;
@@ -101,4 +111,13 @@
   & i {
     font-size: 17px;
   }
+}
+@include smobile {
+  .cart-footer-btn {
+    padding: 0 30px;
+  }
+}
+.notice li {
+  list-style-type: disc;
+  padding-bottom: 3px;
 }

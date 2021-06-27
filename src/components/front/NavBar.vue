@@ -1,7 +1,7 @@
 <template>
 <section>
   <nav :class="{ 'navbar-scroll': scrollHeader , 'bg-theme' : togglerBtn }" class="navbar navbar-expand-md py-0">
-    <div class="container-fluid container-md align-items-center my-2 my-sm-4 my-md-0">
+    <div class="container-fluid container-md align-items-center my-2 my-md-0">
       <h1 class="h3 ml-5 ml-md-0">
         <router-link :to="{ name: 'Home' }" @click="togglerBtn = false" class="navbar-logo fw-bold ps-7 ps-sm-0" :class="{ 'text-white' : togglerBtn }">Sebamed</router-link>
       </h1>
@@ -46,7 +46,7 @@
               </li>
             </ul>
             <!-- 電腦版 -->
-            <ul class="navbar-menu navbar-skin-menu bg-theme p-7 ms-3">
+            <ul class="navbar-menu navbar-skin-menu bg-theme p-7 ms-3 d-none d-md-block">
               <li class="mb-5">
                 <a href="#">[ 小資美學堂 ] 肌膚 你不知道的奧秘</a>
               </li>

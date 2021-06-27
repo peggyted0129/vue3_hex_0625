@@ -11,7 +11,8 @@ export default {
       cart: { // GET | 購物車 api 列表
         carts: []
       },
-      cartLength: 0 // GET | 購物車列表陣列筆數
+      cartLength: 0, // GET | 購物車列表陣列筆數
+      coupon_code: ''
     }
   },
   computed: { // 購物車總計
@@ -94,14 +95,31 @@ export default {
       sessionStorage.removeItem('carData')
       this.carData = JSON.parse(sessionStorage.getItem('carData')) || []
     },
-    // 加入 API 購物車
+    // 把 session 購物車清空
     delSessionCart () {
       this.carData = [] // 清空初始化購物車 session 內容
       sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
-      console.log('4. 清空 session 購物車全部內容')
-      this.getCarts()
-      this.$router.push('/checkout/order_create')
+      console.log('清空 session 購物車全部內容')
     },
+    addCouponCode () { // 加入 Coupon
+      const vm = this
+      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/coupon`
+      const coupon = {
+        code: vm.coupon_code
+      }
+      vm.$store.dispatch('updateLoading', true)
+      vm.$http.post(api, { data: coupon }).then((res) => {
+        if (res.data.message) {
+          vm.toastTopEnd(res.data.message, 'success')
+          vm.$store.dispatch('updateLoading', false)
+          vm.getCarts()
+        } else {
+          vm.toastTopEnd(res.data.message, 'error')
+          vm.$store.dispatch('updateLoading', false)
+        }
+      })
+    },
+    // 加入 API 購物車，執行完後轉址到 Order 頁
     postCarts () {
       this.coupon_code = ''
       this.$store.dispatch('updateLoading', true)
@@ -119,11 +137,12 @@ export default {
             console.log('產品索引', index, 'POST 購物車成功')
             setTimeout(() => {
               if ((this.carData.length - 1) === index) { // 4. 清空 session 購物車
-                console.log('3. 跑到最後一個 index', index, '準備倒數5秒清空 session 購物車')
-                this.delSessionCart()
+                console.log('3. 跑到最後一個 index', index, '準備倒數5秒轉址')
                 this.$store.dispatch('updateLoading', false)
+                this.getCarts()
+                this.$router.push('/checkout/order_create')
               }
-            }, 5000)
+            }, 4000)
           })
         })
       })
@@ -193,6 +212,11 @@ export default {
       } else if (status === 'minus') {
         this.num -= 1
       }
+    },
+    // 套用優惠: 購物車總價四捨五入
+    getDiscount (totalPrice) {
+      const discount = Math.round(totalPrice)
+      return discount
     },
     toastTopEnd (msg, icon) {
       this.$swal({

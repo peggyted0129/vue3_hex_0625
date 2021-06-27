@@ -1,0 +1,62 @@
+.order {
+  padding-top: 65px;
+}
+.order-banner {
+  @include banner('~@/assets/img/order.png', 228px);
+  background-position: 85%;
+}
+.orderStep {
+  background-color: transparent;
+  text-align: center;
+}
+.step {
+  padding: 6px 20px;
+  margin: 0 5px;
+  border-radius: 3px;
+  border: 1px solid #b2b2b2;
+  color: #4f4f4f;
+  position: relative;
+  &.current {
+    border: 1px solid $sgreen;
+    font-weight: bolder;
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+  &.current :after {
+    opacity: 1;
+  }
+  & :after {
+    content: "";
+    position: absolute;
+    left: calc(50% - 25px);
+    bottom: 4px;
+    width: 70px;
+    height: 7px;
+    background-color: rgba(154, 149, 149, 0.6);
+    opacity: 0;
+  }
+}
+@include mobile { // 576px
+  .step {
+    padding: 14px 38px;
+    & :after {
+      bottom: 13px;
+    }
+    &.current {
+      background-color: rgba(255, 255, 255, 0.6);
+    }
+  }
+}
+.order-info {
+  border: 1px solid #b2b2b2;
+  border-radius: 3px;
+}
+.totalInfo {
+  margin: 0 auto;
+  max-width: 380px;
+  // text-align: center;
+  & td {
+    border: none;
+    font-size: 15px;
+    padding: 10px;
+  }
+}

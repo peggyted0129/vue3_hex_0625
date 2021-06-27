@@ -4,9 +4,9 @@
     <img src="https://upload.cc/i1/2021/06/12/N7mIQ1.gif
 " alt="loading">
   </loading>
-  <!-- banner -->
-  <div class="w-100 cart-banner mb-12"></div>
-  <div class="container mb-15">
+  <div class="container mb-13 mb-md-20">
+    <!-- banner -->
+    <div class="w-100 cart-banner mb-12"></div>
     <div class="d-flex align-items-center justify-content-between mb-4">
       <h3 class="text-theme fw-bolder">購買清單</h3>
       <button @click="delAllLocalCarts" class="btn btn-outline-danger" type="button" v-if="carData.length > 0">清空購物車</button>
@@ -24,7 +24,7 @@
           <li class="orderList" v-for="item in carData" :key="item.product_id">
             <div class="row flex-wrap">
               <div class="col-3 col-md-2 px-0 px-md-0">
-                <router-link :to="{ name: 'ProductDetail', params: { id: item.product_id }}" class="orderImg">
+                <router-link :to="{ name: 'ProductDetail', params: { id: item.product_id }}" class="orderImg h-100">
                   <img :src="item.imageUrl" alt="cart-item">
                 </router-link>
               </div>
@@ -82,6 +82,22 @@
         前往結帳<i class="fas fa-angle-double-right ms-3"></i>
       </button>
     </div>
+    <div class="product-content mt-15 mt-md-20 mb-4">
+      <h3>NOTICE</h3>
+    </div>
+    <div class="text-sgreen d-flex align-items-center">
+      <i class="fas fa-exclamation-circle me-5" style="font-size: 20px;"></i>
+      <h5 class="fw-bolder">注意事項</h5>
+    </div>
+    <ul class="notice ps-11 fw-bolder">
+      <li class="mt-5">所有產品保證全為原裝進口，品質有保障。</li>
+      <li>請確認所填寫的資料是否正確，下單後未提供修改付款方式服務。</li>
+      <li>提供完整客戶諮詢服務。</li>
+      <li>提供您最有保障及便利的購物環境。</li>
+      <li>所有商品運送均使用統一速達宅急便，可挑選最方便收貨時間。</li>
+      <li>本店商品為統一會於付款後 7 個工作日內出貨(不含假日)。</li>
+      <li>辦理退換貨時，商品必須是全新狀態與完整包裝，退回之商品必須於 7 日鑑賞期內寄回。</li>
+    </ul>
   </div>
 </section>
 </template>
@@ -100,9 +116,11 @@ export default {
     ...mapGetters(['isLoading'])
   },
   methods: {
+    //
   },
   created () {
-    this.getCarts()
+    console.log('這頁為 session 裡的購物車資料', this.carData)
+    // this.getCarts()
   }
 }
 </script>

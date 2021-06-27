@@ -13,4 +13,12 @@
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(121, 119, 116, 0.6);
 }
-
+/* Order 頁 | 顧客填寫表單驗證 */
+.form-select:focus {
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(121, 119, 116, 0.6);
+}
+.customer label {
+  font-weight: bolder;
+}
