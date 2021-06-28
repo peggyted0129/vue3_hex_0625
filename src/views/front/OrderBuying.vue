@@ -46,7 +46,7 @@
       <Form @submit="createOrder" ref="form" class="row customer g-3 mt-5 mx-auto" v-slot="{ errors }" style="max-width:800px">
         <div class="col-md-6">
           <label for="姓名" class="form-label">收件人姓名<span class="text-danger" style="padding-left: 3px;">*</span></label>
-          <Field  v-model="form.user.name" type="text" class="form-control" id="姓名" name="姓名" :class="{ 'is-invalid': errors['姓名'] }" rules="required" placeholder="請輸入姓名" />
+          <Field  v-model.trim="form.user.name" type="text" class="form-control" id="姓名" name="姓名" :class="{ 'is-invalid': errors['姓名'] }" rules="required" placeholder="請輸入姓名" />
           <error-message name="姓名" class="invalid-feedback"></error-message>
         </div>
         <div class="col-md-6">
@@ -56,7 +56,7 @@
         </div>
         <div class="col-md-6">
           <label for="email" class="form-label">收件人 Email<span class="text-danger" style="padding-left: 3px;">*</span></label>
-          <Field v-model="form.user.email" type="email" :class="{ 'is-invalid': errors['email'] }" rules="email|required" class="form-control" id="email" name="email" placeholder="請輸入 email" />
+          <Field v-model.trim="form.user.email" type="email" :class="{ 'is-invalid': errors['email'] }" rules="email|required" class="form-control" id="email" name="email" placeholder="請輸入 email" />
           <error-message name="email" class="invalid-feedback"></error-message>
         </div>
         <div class="col-md-6">
@@ -69,12 +69,12 @@
         </div>
         <div class="col-12">
           <label for="地址" class="form-label">收件人地址<span class="text-danger" style="padding-left: 3px;">*</span></label>
-          <Field v-model="form.user.address" :class="{ 'is-invalid': errors['地址'] }" rules="required" type="text" class="form-control" id="地址" name="地址" placeholder="請輸入地址" />
+          <Field v-model.trim="form.user.address" :class="{ 'is-invalid': errors['地址'] }" rules="required" type="text" class="form-control" id="地址" name="地址" placeholder="請輸入地址" />
           <error-message name="地址" class="invalid-feedback"></error-message>
         </div>
         <div class="mb-3">
           <label for="留言" class="form-label">留言</label>
-          <textarea name="留言" id="留言" class="form-control" cols="20" rows="5" v-model="form.message" placeholder="歡迎留下對我們說的話"></textarea>
+          <textarea name="留言" id="留言" class="form-control" cols="20" rows="5" v-model.trim="form.message" placeholder="歡迎留下對我們說的話"></textarea>
         </div>
         <div class="col-12 d-flex justify-content-between mt-10 mb-7">
           <router-link to="/checkout/order_create" class="btn btn-theme hvr-bounce-to-right" type="button">
@@ -127,16 +127,16 @@ export default {
       } else {
         vm.$http.post(api, { data: order })
           .then((res) => {
+            vm.$store.dispatch('updateLoading', false)
             if (res.data.success) {
-              vm.$store.dispatch('updateLoading', false)
               console.log(res.data)
               vm.toastTopEnd(res.data.message, 'success')
               vm.getCarts()
               vm.$refs.form.resetForm() // 清空欄位
               vm.form.message = ''
+              vm.$router.push(`/checkout/order_paid/${res.data.orderId}`)
             } else {
               vm.toastTopEnd(res.data.message, 'error')
-              vm.$store.dispatch('updateLoading', false)
             }
           })
           .catch((err) => {

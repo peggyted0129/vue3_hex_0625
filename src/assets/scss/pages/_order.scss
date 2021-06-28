@@ -50,6 +50,15 @@
   border: 1px solid #b2b2b2;
   border-radius: 3px;
 }
+.orderPaid {
+  border: none;
+  margin-bottom: 5px;
+  list-style: none;
+  padding: 5px 15px;
+  &.paidSummary {
+    border-top: 1px solid #b2b2b2;
+  }
+}
 .totalInfo {
   margin: 0 auto;
   max-width: 380px;

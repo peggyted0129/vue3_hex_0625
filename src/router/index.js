@@ -35,27 +35,20 @@ const routes = [
         component: () => import('@/components/front/Checkout'),
         children: [
           {
-            path: 'order_create', // 建立訂單
+            path: 'order_create', // 確認購物車內容
             name: 'OrderCreate',
             component: () => import('@/views/front/OrderCreate')
           },
           {
-            path: 'order_buying', // 確認訂單
+            path: 'order_buying', // 填寫資料
             name: 'OrderBuying',
             component: () => import('@/views/front/OrderBuying')
-          }
-          /*
+          },
           {
-            path: 'order_paying/:orderId', // 確認訂單
-            name: 'OrderPaying',
-            component: () => import('@/views/front/OrderPaying')
+            path: 'order_paid/:orderId', // 結帳成功
+            name: 'OrderPaid',
+            component: () => import('@/views/front/OrderPaid')
           }
-          */
-          // {
-          //   path: 'order_paid/:orderId', // 結帳成功
-          //   name: 'OrderPaid',
-          //   component: () => import('@/views/front/OrderPaid')
-          // }
         ]
       }
     ]
