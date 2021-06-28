@@ -63,7 +63,7 @@
             <td class="text-end">- NT ${{ cart.total - cart.final_total }}</td>
           </tr>
           <tr>
-            <td v-if="cart.total !== cart.final_total" class="h5 fw-bolder">應付金額 (套用優惠券)</td>
+            <td v-if="cart.total !== cart.final_total" class="h5 fw-bolder">應付金額 (已套用優惠券)</td>
             <td v-if="cart.total === cart.final_total" class="h5 fw-bolder">應付金額 (未使用優惠券)</td>
             <td class="h5 fw-bolder text-sgreen text-end">NT ${{ cart.final_total }}</td>
           </tr>
@@ -73,6 +73,10 @@
         <router-link to="/checkout/order_buying" class="btn btn-theme hvr-bounce-to-right" type="button">
           下一步<i class="fas fa-angle-double-right ms-3"></i>
         </router-link>
+      </div>
+      <div>
+        <p class="h6 text-sgreen ms-5 fw-bolder">( 優惠券 8 折碼 : HappyCoupon )</p>
+        <p class="h6 text-sgreen ms-5 fw-bolder">( 優惠券 7 折碼 : CoolCoupon )</p>
       </div>
     </div>
   </div>
@@ -96,7 +100,7 @@
 </section>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import MixUser from '@/components/MixUser.vue'
 
 export default {
@@ -106,13 +110,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['orderStep'])
+    ...mapGetters(['isLoading', 'orderStep'])
   },
   methods: {
-    ...mapGetters(['setOrderStep'])
+    ...mapActions(['setOrderStep'])
   },
   created () {
     this.getCarts()
+    this.setOrderStep('create')
   }
 }
 </script>

@@ -114,7 +114,7 @@
             </li>
           </ul>
           <div v-if="carData.length > 0" class="d-flex justify-content-end align-items-center w-100 text-end mt-7">
-            <p>( 按下 "前往結帳" 後，<span class="text-sgreen fw-bolder">購物車清單</span>內容會清空 | <span class="text-sgreen fw-bolder">未結帳的購物車內容</span>也會清空 )</p>
+            <p>( 按下 "前往結帳" 後，<span class="text-sgreen fw-bolder">將跳轉至 Order 頁面</span> | <span class="text-sgreen fw-bolder">上一個未結帳的購物車內容</span>也會清空 )</p>
             <button type="button" @click="postCarts" class="cart-footer-btn btn btn-sgreen text-white hvr-float ms-5" style="width:250px">
               加入購物車，結帳去!<i class="fas fa-angle-double-right ms-3"></i>
             </button>

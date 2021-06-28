@@ -11,10 +11,10 @@
           <div class="step" :class="{ current: orderStep == 'create' }">Step1<p>確認購買</p></div>
         </div>
         <div class="col-sm-4">
-          <div class="step" :class="{ current: orderStep == 'paying' }">Step1<p>填寫資料</p></div>
+          <div class="step" :class="{ current: orderStep == 'paying' }">Step2<p>填寫資料</p></div>
         </div>
         <div class="col-sm-4">
-          <div class="step" :class="{ current: orderStep == 'paid' }">Step1<p>完成訂單</p></div>
+          <div class="step" :class="{ current: orderStep == 'paid' }">Step3<p>完成訂單</p></div>
         </div>
       </div>
     </div>
@@ -25,7 +25,7 @@
 </section>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   data () {
@@ -33,10 +33,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['orderStep'])
+    ...mapGetters(['isLoading', 'orderStep'])
   },
   methods: {
-    ...mapGetters(['setOrderStep'])
+    ...mapActions(['setOrderStep'])
+  },
+  created () {
+    this.setOrderStep('create')
   }
 }
 </script>

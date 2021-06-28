@@ -19,7 +19,7 @@
             <div class="col-9 col-md-10 px-0">
               <div class="row mx-3 w-100">
                 <div class="col-12 col-md-6 pb-3 px-0">
-                  <div class="orderTitle fw-bolder pt-md-9">{{ item.product.title }}</div>
+                  <div class="orderTitle fw-bolder pt-md-9 ps-4">{{ item.product.title }}</div>
                 </div>
                 <div class="col-6 col-md-2 pb-3 px-0">
                   <div class="pt-md-9 ms-md-3">x {{ item.qty }}</div>
@@ -38,9 +38,11 @@
           </div>
         </li>
       </ul>
+      <div v-if="cart.total !== cart.final_total" class="text-end mt-3">( 已套用優惠券 )</div>
+      <div v-if="cart.total === cart.final_total" class="text-end mt-3">( 未套用優惠券 )</div>
     </div>
+    <!-- 顧客資料 -->
     <div class="col-12 col-md-7 order-info align-self-baseline">
-      <!-- 顧客資料 -->
       <Form @submit="createOrder" ref="form" class="row customer g-3 mt-5 mx-auto" v-slot="{ errors }" style="max-width:800px">
         <div class="col-md-6">
           <label for="姓名" class="form-label">收件人姓名<span class="text-danger" style="padding-left: 3px;">*</span></label>
@@ -91,7 +93,7 @@
 </section>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import MixUser from '@/components/MixUser.vue'
 // vm.$router.push(`/checkout/order_paying/${response.data.orderId}`)
 export default {
@@ -110,10 +112,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['orderStep'])
+    ...mapGetters(['isLoading', 'orderStep'])
   },
   methods: {
-    ...mapGetters(['setOrderStep']),
+    ...mapActions(['setOrderStep']),
     createOrder () {
       const vm = this
       const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/order`
@@ -150,6 +152,7 @@ export default {
   },
   created () {
     this.getCarts()
+    this.setOrderStep('paying')
   }
 }
 </script>
