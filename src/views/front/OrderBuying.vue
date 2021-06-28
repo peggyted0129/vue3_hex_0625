@@ -83,11 +83,6 @@
           <button type="submit" class="btn btn-theme hvr-bounce-to-right">送出訂單</button>
         </div>
       </Form>
-      <!-- <div class="nextStep text-end mb-7">
-        <button class="btn btn-theme hvr-bounce-to-right" type="button">
-          下一步<i class="fas fa-angle-double-right ms-3"></i>
-        </button>
-      </div> -->
     </div>
   </div>
 </section>
@@ -95,7 +90,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import MixUser from '@/components/MixUser.vue'
-// vm.$router.push(`/checkout/order_paying/${response.data.orderId}`)
 export default {
   mixins: [MixUser],
   data () {
@@ -132,6 +126,7 @@ export default {
               console.log(res.data)
               vm.toastTopEnd(res.data.message, 'success')
               vm.getCarts()
+              vm.delSessionCart() // 把 session 購物車清空
               vm.$refs.form.resetForm() // 清空欄位
               vm.form.message = ''
               vm.$router.push(`/checkout/order_paid/${res.data.orderId}`)
@@ -156,3 +151,8 @@ export default {
   }
 }
 </script>
+<style scope>
+.swal2-container {
+  margin-top: 150px;
+}
+</style>

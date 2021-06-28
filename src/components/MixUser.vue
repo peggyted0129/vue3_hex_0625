@@ -91,15 +91,17 @@ export default {
         }
       })
     },
-    delAllLocalCarts () { // 刪除 seesion 全部購物車資料
+    delAllLocalCarts () { // 刪除 seesion 全部購物車資料 - 後台 Shopping 頁面用
+      this.toastTopEnd('購物車商品已全部刪除', 'success')
       sessionStorage.removeItem('carData')
       this.carData = JSON.parse(sessionStorage.getItem('carData')) || []
     },
-    // 把 session 購物車清空
+    // 把 session 購物車清空 - 在 Order 頁面用
     delSessionCart () {
-      this.carData = [] // 清空初始化購物車 session 內容
+      this.carData = JSON.parse(sessionStorage.getItem('carData')) || [] // 清空初始化購物車 session 內容
       sessionStorage.removeItem('carData') // 清空 seesion 購物車資料
       console.log('清空 session 購物車全部內容')
+      this.toastTopEnd('購物車商品已全部刪除', 'success')
     },
     addCouponCode () { // 加入 Coupon
       const vm = this
@@ -109,7 +111,7 @@ export default {
       }
       vm.$store.dispatch('updateLoading', true)
       vm.$http.post(api, { data: coupon }).then((res) => {
-        if (res.data.message) {
+        if (res.data.success) {
           vm.toastTopEnd(res.data.message, 'success')
           vm.$store.dispatch('updateLoading', false)
           vm.getCarts()

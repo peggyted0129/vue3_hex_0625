@@ -21,6 +21,7 @@ export default createStore({
       const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/order/${orderId}`
       context.commit('LOADING', true)
       axios.get(api).then((response) => {
+        console.log(response)
         context.commit('GET_ORDER', response.data.order)
         context.commit('LOADING', false)
       })
@@ -31,7 +32,6 @@ export default createStore({
       axios.post(api).then((response) => {
         if (response.data.success) {
           context.dispatch('getOrder', orderId)
-          context.dispatch('alertModules/updateMessage', { message: '付款完成', status: 'info' })
         }
         context.commit('LOADING', false)
       })

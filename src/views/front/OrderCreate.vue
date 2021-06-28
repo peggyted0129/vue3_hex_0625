@@ -121,3 +121,8 @@ export default {
   }
 }
 </script>
+<style scope>
+.swal2-container {
+  margin-top: 150px;
+}
+</style>

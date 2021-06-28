@@ -69,3 +69,38 @@
     padding: 10px;
   }
 }
+.paid-title img {
+  width: 80px;
+  height: 80px;
+}
+.paidList {
+  border: none;
+  list-style: none;
+  margin: 15px 0;
+}
+.paidLine {
+  border-top: 1px solid #b2b2b2;
+}
+.paid-banner {
+  @include banner('~@/assets/img/thank.jpg', 700px)
+}
+.gopay {
+  animation: beat .7s infinite;
+  animation-name: beat;
+  transition: .3s;
+}
+@keyframes beat {
+  25% {
+    transform: translateY(3px);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+  75% {
+    transform: translateY(3px);
+  }
+  105% {
+    transform: translateY(5px);
+  }
+}
+
