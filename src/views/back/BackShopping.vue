@@ -55,6 +55,7 @@
         </h3>
         <button @click="delAllLocalCarts" class="btn btn-outline-danger" type="button" v-if="carData.length > 0">清空 session 購物車</button>
       </div>
+      <p>這是暫存在 session 裡的購物車內容 (將在送出顧客表單後清空...)</p>
       <div class="row">
         <div class="col-12">
           <div v-if="carData.length == 0" class="empty fw-bolder d-flex align-items-center justify-content-center">
@@ -121,11 +122,13 @@
           </div>
         </div>
       </div>
+      <hr class="my-12">
       <!-- 購物車列表 - 加入 API 後的內容 -->
       <div class="d-flex align-items-center justify-content-between mt-10 mb-4">
         <h3 class="text-theme fw-bolder">購物車確定，準備結帳!! <span class="h6 text-sgreen ms-5 fw-bolder">( 優惠券 8 折碼 : HappyCoupon )</span><span class="h6 text-sgreen ms-5 fw-bolder">( 優惠券 7 折碼 : CoolCoupon )</span></h3>
         <button @click="deleteAllCarts" class="btn btn-outline-danger" type="button" v-if="cartLength > 0">清空購物車</button>
       </div>
+      <p>這是上一筆的購物車內容</p>
       <div class="row">
         <div class="col-12">
           <div v-if="cartLength == 0" class="empty fw-bolder d-flex align-items-center justify-content-center">

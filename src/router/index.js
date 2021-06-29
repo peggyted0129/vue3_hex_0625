@@ -79,6 +79,11 @@ const routes = [
         path: 'shopping',
         name: 'Backshopping',
         component: () => import('@/views/back/BackShopping')
+      },
+      {
+        path: 'orders', // 訂單列表
+        name: 'Backorders',
+        component: () => import('@/views/back/BackOrders')
       }
     ]
   }

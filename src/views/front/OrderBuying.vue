@@ -43,7 +43,7 @@
     </div>
     <!-- 顧客資料 -->
     <div class="col-12 col-md-7 order-info align-self-baseline">
-      <Form @submit="createOrder" ref="form" class="row customer g-3 mt-5 mx-auto" v-slot="{ errors }" style="max-width:800px">
+      <Form @submit="createOrder" :validation-schema="schema" ref="form" class="row customer g-3 mt-5 mx-auto" v-slot="{ errors }" style="max-width:800px">
         <div class="col-md-6">
           <label for="姓名" class="form-label">收件人姓名<span class="text-danger" style="padding-left: 3px;">*</span></label>
           <Field  v-model.trim="form.user.name" type="text" class="form-control" id="姓名" name="姓名" :class="{ 'is-invalid': errors['姓名'] }" rules="required" placeholder="請輸入姓名" />
@@ -72,6 +72,32 @@
           <Field v-model.trim="form.user.address" :class="{ 'is-invalid': errors['地址'] }" rules="required" type="text" class="form-control" id="地址" name="地址" placeholder="請輸入地址" />
           <error-message name="地址" class="invalid-feedback"></error-message>
         </div>
+        <div class="col-12 mt-5">
+          <label>購買通路</label>
+          <div class="d-flex align-items-center flex-wrap">
+            <template v-for="item in buyChannels" :key="item.key">
+              <div v-if="item.key =='seller'" class="d-flex align-items-center">
+                <div class="me-3">
+                  <Field type="radio" name="shop" :value="item.key" :id="item.key" class="me-2"></Field>
+                  <label :for="item.key">{{ item.value }}</label>
+                </div>
+                <input class="form-control" type="text" placeholder="業務姓名" style="width: 135px">
+              </div>
+              <div v-else-if="item.key=='others'" class="d-flex align-items-center">
+                <div class="me-3">
+                  <Field type="radio" name="shop" :value="item.key" :id="item.key" class="me-2"></Field>
+                  <label :for="item.key">{{ item.value }}</label>
+                </div>
+                <input class="form-control" type="text" placeholder="請填寫" style="width: 175px;">
+              </div>
+              <div v-else class="me-4">
+                <Field type="radio" name="shop" :value="item.key" :id="item.key" class="me-2"></Field>
+                <label :for="item.key">{{ item.value }}</label>
+              </div>
+            </template>
+          </div>
+          <error-message name="shop" class="error-text"></error-message>
+        </div>
         <div class="mb-3">
           <label for="留言" class="form-label">留言</label>
           <textarea name="留言" id="留言" class="form-control" cols="20" rows="5" v-model.trim="form.message" placeholder="歡迎留下對我們說的話"></textarea>
@@ -93,7 +119,16 @@ import MixUser from '@/components/MixUser.vue'
 export default {
   mixins: [MixUser],
   data () {
+    const schema = {
+      shop: (value) => {
+        if (value) {
+          return true
+        }
+        return '你需要選擇 "購買通路"'
+      }
+    }
     return {
+      schema,
       form: { // 表單結構
         user: {
           name: '',
@@ -102,7 +137,15 @@ export default {
           address: ''
         },
         message: ''
-      }
+      },
+      buyChannels: [
+        { key: 'department', value: '百貨專櫃' },
+        { key: 'drug', value: '藥局診所' },
+        { key: 'online', value: '網路購買' },
+        { key: 'gift', value: '親友贈送' },
+        { key: 'seller', value: '專員訂購' },
+        { key: 'others', value: '其他' }
+      ]
     }
   },
   computed: {

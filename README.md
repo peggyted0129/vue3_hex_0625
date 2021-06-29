@@ -29,6 +29,10 @@
 - Week6 6/22 注意事項
   - 將購物車商品數量使用 session 記錄
 
+- Week7 6/28 注意事項
+  - 在送出顧客 Form 資料後，才把 session 購物車記錄清除
+  - 在 postCarts 方法部分，要注意 "非同步的問題"
+
 ## Project setup
 ```
 npm install
