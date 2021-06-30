@@ -43,22 +43,21 @@
     </div>
     <!-- 顧客資料 -->
     <div class="col-12 col-md-7 order-info align-self-baseline">
-      <!-- <Form @submit="createOrder" :validation-schema="schema" ref="form" class="row customer g-3 mt-5 mx-auto" v-slot="{ errors }" style="max-width:800px"> -->
-      <Form @submit="createOrder" ref="form" class="row customer g-3 mt-5 mx-auto" v-slot="{ errors }" style="max-width:800px">
+      <Form @submit="createOrder" :validation-schema="schema" ref="form" class="row customer g-3 mt-5 mx-auto" v-slot="{ errors }" style="max-width:800px">
         <div class="col-md-6">
           <label for="姓名" class="form-label">收件人姓名<span class="text-danger" style="padding-left: 3px;">*</span></label>
           <Field  v-model.trim="form.user.name" type="text" class="form-control" id="姓名" name="姓名" :class="{ 'is-invalid': errors['姓名'] }" rules="required" placeholder="請輸入姓名" />
-          <error-message name="姓名" class="invalid-feedback"></error-message>
+          <error-message name="姓名" class="error-text invalid-feedback"></error-message>
         </div>
         <div class="col-md-6">
           <label for="手機" class="form-label">收件人手機<span class="text-danger" style="padding-left: 3px;">*</span></label>
           <Field v-model="form.user.tel" type="tel" :rules="isPhone" :class="{ 'is-invalid': errors['手機'] }" class="form-control" id="手機" name="手機" placeholder="請輸入手機" />
-          <error-message name="手機" class="invalid-feedback"></error-message>
+          <error-message name="手機" class="error-text invalid-feedback"></error-message>
         </div>
         <div class="col-md-6">
           <label for="email" class="form-label">收件人 Email<span class="text-danger" style="padding-left: 3px;">*</span></label>
           <Field v-model.trim="form.user.email" type="email" :class="{ 'is-invalid': errors['email'] }" rules="email|required" class="form-control" id="email" name="email" placeholder="請輸入 email" />
-          <error-message name="email" class="invalid-feedback"></error-message>
+          <error-message name="email" class="error-text invalid-feedback"></error-message>
         </div>
         <div class="col-md-6">
           <label for="payment" class="form-label">付款方式<span class="text-danger" style="padding-left: 3px;">*</span></label>
@@ -71,7 +70,7 @@
         <div class="col-12">
           <label for="地址" class="form-label">收件人地址<span class="text-danger" style="padding-left: 3px;">*</span></label>
           <Field v-model.trim="form.user.address" :class="{ 'is-invalid': errors['地址'] }" rules="required" type="text" class="form-control" id="地址" name="地址" placeholder="請輸入地址" />
-          <error-message name="地址" class="invalid-feedback"></error-message>
+          <error-message name="地址" class="error-text invalid-feedback"></error-message>
         </div>
         <div class="col-12 mt-5">
           <label>購買通路</label>
@@ -97,8 +96,7 @@
               </div>
             </template>
           </div>
-          <error-message name="購買通路" class="invalid-feedback"></error-message>
-          <!-- <error-message name="shop" class="error-text"></error-message> -->
+          <error-message name="購買通路" class="error-text"></error-message>
         </div>
         <div class="mb-3">
           <label for="留言" class="form-label">留言</label>
@@ -121,16 +119,21 @@ import MixUser from '@/components/MixUser.vue'
 export default {
   mixins: [MixUser],
   data () {
-  //   const schema = {
-  //     shop: (value) => {
-  //       if (value) {
-  //         return true
-  //       }
-  //       return '你需要選擇 "購買通路"'
-  //     }
-  //   }
+    const schema = {
+      姓名: 'required',
+      // 手機: 'required|min:10',
+      手機: 'required|isPhone',
+      email: 'required|email',
+      地址: 'required',
+      購買通路: (value) => {
+        if (value) {
+          return true
+        }
+        return '你需要選擇 "購買通路"'
+      }
+    }
     return {
-      // schema,
+      schema,
       form: { // 表單結構
         user: {
           name: '',
