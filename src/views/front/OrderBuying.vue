@@ -51,8 +51,7 @@
         </div>
         <div class="col-md-6">
           <label for="手機" class="form-label">收件人手機<span class="text-danger" style="padding-left: 3px;">*</span></label>
-          <Field v-model="form.user.tel" type="tel" :class="{ 'is-invalid': errors['手機'] }" rules="phone|required"  class="form-control" id="手機" name="手機" placeholder="請輸入手機" />
-          <!-- <Field v-model="form.user.tel" type="tel" :rules="isPhone" :class="{ 'is-invalid': errors['手機'] }" class="form-control" id="手機" name="手機" placeholder="請輸入手機" /> -->
+          <Field v-model="form.user.tel" type="tel" :rules="isPhone" :class="{ 'is-invalid': errors['手機'] }" class="form-control" id="手機" name="手機" placeholder="請輸入手機" />
           <error-message name="手機" class="error-text invalid-feedback"></error-message>
         </div>
         <div class="col-md-6">
@@ -123,7 +122,6 @@ export default {
   data () {
     const schema = {
       姓名: 'required',
-      // 手機: 'required|min:10',
       手機: 'required|phone',
       email: 'required|email',
       地址: 'required',

@@ -22,13 +22,6 @@ window.$ = jquery
 
 Object.keys(AllRules).forEach((rule) => {
   defineRule(rule, AllRules[rule])
-  defineRule('phone', value => {
-    const phoneNumber = /^(09)[0-9]{8}$/
-    if (phoneNumber.test(value)) {
-      return '需要正確的電話號碼'
-    }
-    return true
-  })
 })
 
 configure({
