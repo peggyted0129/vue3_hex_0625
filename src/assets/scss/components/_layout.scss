@@ -1,4 +1,4 @@
-.navbar {  // .navbar-logo
+.navbar {  // .navbar-logo navbar-menu
   position: fixed;
   z-index: 999;
   width: 100%;
@@ -56,6 +56,7 @@
 }
 @include pad {
   .navbar-menu {
+    left: -9999px;
     opacity: 0;
     // display: none;
     position: absolute;
@@ -69,8 +70,9 @@
     }
   }
   .nav-item:hover .navbar-menu {
+    left: 700px;
     opacity: 1;
-    // display: block;
+    display: block;
     transition: .5s ease-out all;
     transform: translateY(-20px);
   }
