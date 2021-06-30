@@ -43,7 +43,8 @@
     </div>
     <!-- 顧客資料 -->
     <div class="col-12 col-md-7 order-info align-self-baseline">
-      <Form @submit="createOrder" :validation-schema="schema" ref="form" class="row customer g-3 mt-5 mx-auto" v-slot="{ errors }" style="max-width:800px">
+      <!-- <Form @submit="createOrder" :validation-schema="schema" ref="form" class="row customer g-3 mt-5 mx-auto" v-slot="{ errors }" style="max-width:800px"> -->
+      <Form @submit="createOrder" ref="form" class="row customer g-3 mt-5 mx-auto" v-slot="{ errors }" style="max-width:800px">
         <div class="col-md-6">
           <label for="姓名" class="form-label">收件人姓名<span class="text-danger" style="padding-left: 3px;">*</span></label>
           <Field  v-model.trim="form.user.name" type="text" class="form-control" id="姓名" name="姓名" :class="{ 'is-invalid': errors['姓名'] }" rules="required" placeholder="請輸入姓名" />
@@ -78,25 +79,26 @@
             <template v-for="item in buyChannels" :key="item.key">
               <div v-if="item.key =='seller'" class="d-flex align-items-center">
                 <div class="me-3">
-                  <Field type="radio" name="shop" :value="item.key" :id="item.key" class="me-2"></Field>
+                  <Field type="radio" name="購買通路" :value="item.key" :id="item.key" class="me-2"></Field>
                   <label :for="item.key">{{ item.value }}</label>
                 </div>
                 <input class="form-control" type="text" placeholder="業務姓名" style="width: 135px">
               </div>
               <div v-else-if="item.key=='others'" class="d-flex align-items-center">
                 <div class="me-3">
-                  <Field type="radio" name="shop" :value="item.key" :id="item.key" class="me-2"></Field>
+                  <Field type="radio" name="購買通路" :value="item.key" :id="item.key" class="me-2"></Field>
                   <label :for="item.key">{{ item.value }}</label>
                 </div>
                 <input class="form-control" type="text" placeholder="請填寫" style="width: 175px;">
               </div>
               <div v-else class="me-4">
-                <Field type="radio" name="shop" :value="item.key" :id="item.key" class="me-2"></Field>
+                <Field type="radio" name="購買通路" :value="item.key" :id="item.key" class="me-2"></Field>
                 <label :for="item.key">{{ item.value }}</label>
               </div>
             </template>
           </div>
-          <error-message name="shop" class="error-text"></error-message>
+          <error-message name="購買通路" class="invalid-feedback"></error-message>
+          <!-- <error-message name="shop" class="error-text"></error-message> -->
         </div>
         <div class="mb-3">
           <label for="留言" class="form-label">留言</label>
@@ -119,16 +121,16 @@ import MixUser from '@/components/MixUser.vue'
 export default {
   mixins: [MixUser],
   data () {
-    const schema = {
-      shop: (value) => {
-        if (value) {
-          return true
-        }
-        return '你需要選擇 "購買通路"'
-      }
-    }
+  //   const schema = {
+  //     shop: (value) => {
+  //       if (value) {
+  //         return true
+  //       }
+  //       return '你需要選擇 "購買通路"'
+  //     }
+  //   }
     return {
-      schema,
+      // schema,
       form: { // 表單結構
         user: {
           name: '',
