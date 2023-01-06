@@ -8,15 +8,15 @@
         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
       </div>
       <div class="carousel-inner">
-        <div class="carousel-item active" data-bs-interval="5000">
-          <img src="../../assets/img/carousel1.jpg" class="d-block w-100" alt="img_oil">
-        </div>
-        <div class="carousel-item" data-bs-interval="5000">
-          <img src="../../assets/img/carousel2.jpg" class="d-block w-100" alt="img_dark">
-        </div>
-        <div class="carousel-item" data-bs-interval="5000">
-          <img src="../../assets/img/carousel3.jpeg" class="d-block w-100" alt="img_color">
-        </div>
+          <div class="carousel-item active" data-bs-interval="5000">
+            <img src="../../assets/img/carousel1.jpg" class="d-block w-100" alt="img_oil">
+          </div>
+          <div class="carousel-item" data-bs-interval="5000">
+            <img src="../../assets/img/carousel2.jpg" class="d-block w-100" alt="img_dark">
+          </div>
+          <div class="carousel-item" data-bs-interval="5000">
+            <img src="../../assets/img/carousel3.jpeg" class="d-block w-100" alt="img_color">
+          </div>
       </div>
       <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -34,7 +34,7 @@
         <div class="row">
           <div class="col-lg-4 col-md-6 col-12 mb-6" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100">
             <div class="card mews-card">
-              <img src="../../assets/img/banner3.jpg" class="card-img-top" alt="...">
+              <img src="../../assets/img/sale.jpg" class="card-img-top" alt="...">
               <div class="card-body mx-5" style="height: 155px">
                 <h5 class="card-title fw-bolder">在家安心購物，宅配免費</h5>
                 <p class="card-text">防疫有你有我！宅在家也能安心購物</p>
@@ -122,9 +122,11 @@
 export default {
   data () {
     return {
+      //
     }
   },
   methods: {
+    //
   },
   mounted () {
     //
